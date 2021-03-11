@@ -11,6 +11,7 @@ RequestInteraction _$RequestInteractionFromJson(Map<String, dynamic> json) {
     method: json['method'] as String,
     uri: json['uri'] as String,
     headers: Map<String, String>.from(json['headers'] as Map),
+    correlator: json['correlator'] as String,
     body: json['body'] == null
         ? null
         : InteractionBody.fromJson(json['body'] as Map<String, dynamic>),
@@ -21,6 +22,7 @@ Map<String, dynamic> _$RequestInteractionToJson(RequestInteraction instance) =>
     <String, dynamic>{
       'headers': instance.headers,
       'body': instance.body,
+      'correlator': instance.correlator,
       'method': instance.method,
       'uri': instance.uri,
     };
@@ -32,6 +34,7 @@ ResponseInteraction _$ResponseInteractionFromJson(Map<String, dynamic> json) {
     body: json['body'] == null
         ? null
         : InteractionBody.fromJson(json['body'] as Map<String, dynamic>),
+    correlator: json['correlator'] as String,
   );
 }
 
@@ -40,6 +43,7 @@ Map<String, dynamic> _$ResponseInteractionToJson(
     <String, dynamic>{
       'headers': instance.headers,
       'body': instance.body,
+      'correlator': instance.correlator,
       'status': instance.status,
     };
 
