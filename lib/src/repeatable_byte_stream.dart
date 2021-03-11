@@ -60,7 +60,12 @@ class RepeatableByteStream extends ByteStream {
 
     // Construct a new controller for the listener, pre-populate it with the
     // bytes we've already collected from the inner stream, and hand it on back.
-    final controller = StreamController<List<int>>()..add(_innerStreamBytes);
+    final controller = StreamController<List<int>>()
+      // It's important that we copy the list, or else it will stick around in
+      // the controller until someone subscribes, which may be AFTER the list
+      // has been written to. This would result in partial or complete
+      // duplication of the bytes in the output.
+      ..add(_innerStreamBytes.toList());
     _listenerControllers.add(controller);
     return controller.stream.listen(
       onData,
