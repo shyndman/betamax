@@ -18,10 +18,10 @@ class ProxyBaseRequest implements BaseRequest {
   Map<String, String> get headers => _inner.headers;
 
   @override
-  int? get contentLength => _inner.contentLength;
+  int get contentLength => _inner.contentLength;
 
   @override
-  set contentLength(int? value) => _inner.contentLength = value;
+  set contentLength(int value) => _inner.contentLength = value;
 
   @override
   bool get persistentConnection => _inner.persistentConnection;
@@ -60,7 +60,7 @@ class ProxyIOStreamedResponse implements IOStreamedResponse {
   int get statusCode => _inner.statusCode;
 
   @override
-  BaseRequest? get request => _inner.request;
+  BaseRequest get request => _inner.request;
 
   @override
   Map<String, String> get headers => _inner.headers;
@@ -69,7 +69,7 @@ class ProxyIOStreamedResponse implements IOStreamedResponse {
   ByteStream get stream => _inner.stream;
 
   @override
-  int? get contentLength => _inner.contentLength;
+  int get contentLength => _inner.contentLength;
 
   @override
   bool get isRedirect => _inner.isRedirect;
@@ -78,7 +78,7 @@ class ProxyIOStreamedResponse implements IOStreamedResponse {
   bool get persistentConnection => _inner.persistentConnection;
 
   @override
-  String? get reasonPhrase => _inner.reasonPhrase;
+  String get reasonPhrase => _inner.reasonPhrase;
 
   @override
   Future<Socket> detachSocket() => _inner.detachSocket();

@@ -13,7 +13,7 @@ import 'package:http/http.dart';
 class RepeatableByteStream extends ByteStream {
   RepeatableByteStream(Stream<List<int>> stream) : super(stream);
 
-  StreamSubscription<List<int>>? _innerSubscription;
+  StreamSubscription<List<int>> _innerSubscription;
   var _innerStreamDone = false;
   final List<int> _innerStreamBytes = [];
   final List<StreamController<List<int>>> _listenerControllers = [];
@@ -24,10 +24,10 @@ class RepeatableByteStream extends ByteStream {
   /// bytestream. Only difference is you can listen as many times as you want.
   @override
   StreamSubscription<List<int>> listen(
-    void Function(List<int> value)? onData, {
-    Function? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
+    void Function(List<int> value) onData, {
+    Function onError,
+    void Function() onDone,
+    bool cancelOnError,
   }) {
     // If we've already read the inner stream in its entirety, all we have to do
     // is return a new stream with its contents.
@@ -47,7 +47,7 @@ class RepeatableByteStream extends ByteStream {
         _innerStreamBytes.addAll(bytes);
         _listenerControllers.addEvent(bytes);
       },
-      onError: (Object e, [StackTrace? st]) {
+      onError: (Object e, [StackTrace st]) {
         _listenerControllers.addError(e, st);
       },
       onDone: () {
@@ -83,7 +83,7 @@ extension<T> on List<StreamController<T>> {
     }
   }
 
-  void addError(Object e, [StackTrace? st]) {
+  void addError(Object e, [StackTrace st]) {
     for (final c in this) {
       c.addError(e, st);
     }

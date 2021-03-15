@@ -10,7 +10,9 @@ RequestInteraction _$RequestInteractionFromJson(Map<String, dynamic> json) {
   return RequestInteraction(
     method: json['method'] as String,
     uri: json['uri'] as String,
-    headers: Map<String, String>.from(json['headers'] as Map),
+    headers: (json['headers'] as Map<String, dynamic>)?.map(
+      (k, e) => MapEntry(k, e as String),
+    ),
     correlator: json['correlator'] as String,
     body: json['body'] == null
         ? null
@@ -30,7 +32,9 @@ Map<String, dynamic> _$RequestInteractionToJson(RequestInteraction instance) =>
 ResponseInteraction _$ResponseInteractionFromJson(Map<String, dynamic> json) {
   return ResponseInteraction(
     status: json['status'] as int,
-    headers: Map<String, String>.from(json['headers'] as Map),
+    headers: (json['headers'] as Map<String, dynamic>)?.map(
+      (k, e) => MapEntry(k, e as String),
+    ),
     body: json['body'] == null
         ? null
         : InteractionBody.fromJson(json['body'] as Map<String, dynamic>),

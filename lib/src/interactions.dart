@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:json_annotation/json_annotation.dart';
-
+import 'package:meta/meta.dart';
 part 'interactions.g.dart';
 
 class Recording {
-  Recording(this.name, {required this.onStop});
+  Recording(this.name, {@required this.onStop});
 
   final String name;
   final List<Interaction> interactions = [];
@@ -13,7 +13,7 @@ class Recording {
   bool running = true;
 
   final _outstandingCorrelators = <String>{};
-  Completer<void>? _responsesReceivedCompletor;
+  Completer<void> _responsesReceivedCompletor;
 
   void addRequest(RequestInteraction interaction) {
     if (!running) {
@@ -36,7 +36,7 @@ class Recording {
     if (!running &&
         _outstandingCorrelators.isEmpty &&
         _responsesReceivedCompletor != null) {
-      _responsesReceivedCompletor!.complete();
+      _responsesReceivedCompletor.complete();
       _responsesReceivedCompletor = null;
     }
 
@@ -54,7 +54,7 @@ class Recording {
     }
 
     _responsesReceivedCompletor ??= Completer();
-    return _responsesReceivedCompletor!.future;
+    return _responsesReceivedCompletor.future;
   }
 
   void stop() {
@@ -66,11 +66,11 @@ class Recording {
 @JsonSerializable()
 class RequestInteraction extends Interaction {
   RequestInteraction({
-    required this.method,
-    required this.uri,
-    required Map<String, String> headers,
-    required String correlator,
-    InteractionBody? body,
+    @required this.method,
+    @required this.uri,
+    @required Map<String, String> headers,
+    @required String correlator,
+    InteractionBody body,
   }) : super(headers: headers, body: body, correlator: correlator);
   final String method;
   final String uri;
@@ -86,10 +86,10 @@ class RequestInteraction extends Interaction {
 @JsonSerializable()
 class ResponseInteraction extends Interaction {
   ResponseInteraction({
-    required this.status,
-    required Map<String, String> headers,
-    InteractionBody? body,
-    required String correlator,
+    this.status,
+    Map<String, String> headers,
+    InteractionBody body,
+    @required String correlator,
   }) : super(headers: headers, body: body, correlator: correlator);
   final int status;
 
@@ -102,15 +102,22 @@ class ResponseInteraction extends Interaction {
 }
 
 abstract class Interaction {
-  Interaction({required this.headers, this.body, required this.correlator});
+  Interaction({
+    @required this.headers,
+    this.body,
+    @required this.correlator,
+  });
   final Map<String, String> headers;
-  final InteractionBody? body;
+  final InteractionBody body;
   final String correlator;
 }
 
 @JsonSerializable()
 class InteractionBody {
-  InteractionBody({required this.encoding, required this.string});
+  InteractionBody({
+    @required this.encoding,
+    @required this.string,
+  });
   final String encoding;
   final String string;
 

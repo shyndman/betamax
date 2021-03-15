@@ -9,12 +9,12 @@ import 'intercepted_exchanges.dart';
 import 'interceptor.dart';
 
 class RecordingIOClient extends IOClient {
-  RecordingIOClient([HttpClient? inner]) : super(inner) {
+  RecordingIOClient([HttpClient inner]) : super(inner) {
     _correlatorBase = identityHashCode(this);
   }
 
   final recordingInterceptor = RecordingInterceptor();
-  late int _correlatorBase;
+  int _correlatorBase;
   int _exchangeCount = 0;
 
   @override
@@ -52,14 +52,14 @@ class RecordingIOClient extends IOClient {
 }
 
 class RecordingInterceptor implements Interceptor {
-  Recording? _activeRecording;
+  Recording _activeRecording;
 
   Recording start(String name) {
     if (_activeRecording != null) {
-      _activeRecording!.stop();
+      _activeRecording.stop();
     }
 
-    late Recording newRecording;
+    Recording newRecording;
     newRecording = Recording(name, onStop: () {
       if (_activeRecording == newRecording) {
         _activeRecording = null;
@@ -120,7 +120,7 @@ class RecordingInterceptor implements Interceptor {
     );
   }
 
-  Encoding findEncoding(String? contentTypeString) {
+  Encoding findEncoding(String contentTypeString) {
     if (contentTypeString == null) return latin1;
 
     final contentType = ContentType.parse(contentTypeString);
