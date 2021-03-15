@@ -1,9 +1,9 @@
-name: http_vcr
+name: betamax
 description: >
   Record your test suite's HTTP interactions and replay them during future test
   runs for fast, deterministic, accurate tests.
 version: 1.0.0
-repository: https://github.com/madewithfelt/http_vcr
+repository: https://github.com/madewithfelt/betamax
 
 environment:
   sdk: '>=2.10.0 <3.0.0'
@@ -11,6 +11,7 @@ environment:
 dependencies:
   http: ^0.13.0
   json_annotation: ^3.0.0
+  meta: ^1.0.0
   nock: ^1.2.0
   test: ^1.16.5
 
