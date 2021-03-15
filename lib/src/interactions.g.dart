@@ -6,6 +6,18 @@ part of 'interactions.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+Cassette _$CassetteFromJson(Map<String, dynamic> json) {
+  return Cassette(
+    name: json['name'] as String,
+    interactions: interactionsFromJson(json['interactions']),
+  );
+}
+
+Map<String, dynamic> _$CassetteToJson(Cassette instance) => <String, dynamic>{
+      'name': instance.name,
+      'interactions': interactionsToJson(instance.interactions),
+    };
+
 RequestInteraction _$RequestInteractionFromJson(Map<String, dynamic> json) {
   return RequestInteraction(
     method: json['method'] as String,

@@ -1,66 +1,23 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
-import 'package:http/io_client.dart';
+import 'package:meta/meta.dart';
 
-import 'interactions.dart';
 import 'http/http_intercepted_types.dart';
-import 'interceptor.dart';
-
-class RecordingIOClient extends IOClient {
-  RecordingIOClient([HttpClient inner]) : super(inner) {
-    _correlatorBase = identityHashCode(this);
-  }
-
-  final recordingInterceptor = RecordingInterceptor();
-  int _correlatorBase;
-  int _exchangeCount = 0;
-
-  @override
-  Future<IOStreamedResponse> send(http.BaseRequest request) async {
-    final exchangeCorrelator = _generateCorrelator();
-
-    final interceptedRequest = InterceptedBaseRequest(request);
-    _interceptRequest(interceptedRequest, exchangeCorrelator);
-
-    final interceptedStreamedResponse =
-        InterceptedIOStreamedResponse(await super.send(interceptedRequest));
-    _interceptStreamedResponse(interceptedStreamedResponse, exchangeCorrelator);
-
-    return interceptedStreamedResponse;
-  }
-
-  void _interceptRequest(
-    InterceptedBaseRequest request,
-    String correlator,
-  ) {
-    recordingInterceptor.interceptRequest(request, correlator);
-  }
-
-  void _interceptStreamedResponse(
-    InterceptedIOStreamedResponse response,
-    String correlator,
-  ) {
-    recordingInterceptor.interceptStreamedResponse(response, correlator);
-  }
-
-  String _generateCorrelator() {
-    _exchangeCount++;
-    return '$_correlatorBase-$_exchangeCount';
-  }
-}
+import 'http/http_interceptor.dart';
+import 'interactions.dart';
 
 class RecordingInterceptor implements Interceptor {
-  Recording _activeRecording;
+  Cassette _activeRecording;
 
-  Recording start(String name) {
+  Cassette start(String name) {
     if (_activeRecording != null) {
       _activeRecording.stop();
     }
 
-    Recording newRecording;
-    newRecording = Recording(name, onStop: () {
+    Cassette newRecording;
+    newRecording = Cassette(name, onStop: () {
       if (_activeRecording == newRecording) {
         _activeRecording = null;
       }
@@ -128,5 +85,64 @@ class RecordingInterceptor implements Interceptor {
     if (charset == null) return latin1;
 
     return Encoding.getByName(contentType.charset) ?? latin1;
+  }
+}
+
+class Cassette {
+  Cassette(this.name, {@required this.onStop});
+
+  final String name;
+  final List<Interaction> interactions = [];
+  final void Function() onStop;
+  bool running = true;
+
+  final _outstandingCorrelators = <String>{};
+  Completer<void> _responsesReceivedCompletor;
+
+  void addRequest(RequestInteraction interaction) {
+    if (!running) {
+      throw StateError('Cannot add interactions to a stopped Recording');
+    }
+
+    _outstandingCorrelators.add(interaction.correlator);
+    interactions.add(interaction);
+  }
+
+  void addResponse(ResponseInteraction response) {
+    if (!_outstandingCorrelators.contains(response.correlator)) {
+      throw StateError(
+          'Received a response correlator without an associated request, '
+          'correlator=${response.correlator}');
+    }
+
+    _outstandingCorrelators.remove(response.correlator);
+
+    if (!running &&
+        _outstandingCorrelators.isEmpty &&
+        _responsesReceivedCompletor != null) {
+      _responsesReceivedCompletor.complete();
+      _responsesReceivedCompletor = null;
+    }
+
+    interactions.add(response);
+  }
+
+  /// Returns a future that resolves when all outstanding responses have been
+  /// received by the recorder.
+  Future<void> waitForOutstandingResponses() {
+    assert(!running,
+        'Please stop the recorder before waiting for outstanding responses');
+
+    if (_outstandingCorrelators.isEmpty) {
+      return Future.value();
+    }
+
+    _responsesReceivedCompletor ??= Completer();
+    return _responsesReceivedCompletor.future;
+  }
+
+  void stop() {
+    running = false;
+    onStop();
   }
 }
