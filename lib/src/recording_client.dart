@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
 import 'interactions.dart';
-import 'intercepted_exchanges.dart';
+import 'http/http_intercepted_types.dart';
 import 'interceptor.dart';
 
 class RecordingIOClient extends IOClient {
