@@ -9,23 +9,44 @@ part of 'interactions.dart';
 Cassette _$CassetteFromJson(Map<String, dynamic> json) {
   return Cassette(
     name: json['name'] as String,
-    interactions: interactionsFromJson(json['interactions']),
+    interactions: (json['interactions'] as List)
+        ?.map((e) => e == null
+            ? null
+            : InteractionPair.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
   );
 }
 
 Map<String, dynamic> _$CassetteToJson(Cassette instance) => <String, dynamic>{
       'name': instance.name,
-      'interactions': interactionsToJson(instance.interactions),
+      'interactions': instance.interactions,
+    };
+
+InteractionPair _$InteractionPairFromJson(Map<String, dynamic> json) {
+  return InteractionPair(
+    request: json['request'] == null
+        ? null
+        : RequestInteraction.fromJson(json['request'] as Map<String, dynamic>),
+    response: json['response'] == null
+        ? null
+        : ResponseInteraction.fromJson(
+            json['response'] as Map<String, dynamic>),
+  );
+}
+
+Map<String, dynamic> _$InteractionPairToJson(InteractionPair instance) =>
+    <String, dynamic>{
+      'request': instance.request,
+      'response': instance.response,
     };
 
 RequestInteraction _$RequestInteractionFromJson(Map<String, dynamic> json) {
   return RequestInteraction(
     method: json['method'] as String,
-    uri: json['uri'] as String,
+    url: json['uri'] as String,
     headers: (json['headers'] as Map<String, dynamic>)?.map(
       (k, e) => MapEntry(k, e as String),
     ),
-    correlator: json['correlator'] as String,
     body: json['body'] == null
         ? null
         : InteractionBody.fromJson(json['body'] as Map<String, dynamic>),
@@ -34,11 +55,10 @@ RequestInteraction _$RequestInteractionFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$RequestInteractionToJson(RequestInteraction instance) =>
     <String, dynamic>{
+      'method': instance.method,
+      'uri': instance.url,
       'headers': instance.headers,
       'body': instance.body,
-      'correlator': instance.correlator,
-      'method': instance.method,
-      'uri': instance.uri,
     };
 
 ResponseInteraction _$ResponseInteractionFromJson(Map<String, dynamic> json) {
@@ -50,17 +70,15 @@ ResponseInteraction _$ResponseInteractionFromJson(Map<String, dynamic> json) {
     body: json['body'] == null
         ? null
         : InteractionBody.fromJson(json['body'] as Map<String, dynamic>),
-    correlator: json['correlator'] as String,
   );
 }
 
 Map<String, dynamic> _$ResponseInteractionToJson(
         ResponseInteraction instance) =>
     <String, dynamic>{
+      'status': instance.status,
       'headers': instance.headers,
       'body': instance.body,
-      'correlator': instance.correlator,
-      'status': instance.status,
     };
 
 InteractionBody _$InteractionBodyFromJson(Map<String, dynamic> json) {

@@ -15,7 +15,7 @@ class HttpInterceptingClient extends IOClient {
     _correlatorBase = identityHashCode(this);
   }
 
-  Interceptor interceptor;
+  HttpInterceptor interceptor;
   int _correlatorBase;
   int _exchangeCount = 0;
 
@@ -24,27 +24,19 @@ class HttpInterceptingClient extends IOClient {
     final exchangeCorrelator = _generateCorrelator();
 
     final interceptedRequest = InterceptedBaseRequest(request);
-    _interceptRequest(interceptedRequest, exchangeCorrelator);
+    final responseOverride = await interceptor.interceptRequest(
+        interceptedRequest, exchangeCorrelator);
 
+    final streamedResponse = responseOverride != null
+        ? responseOverride.streamedResponse
+        : await super.send(interceptedRequest);
     final interceptedStreamedResponse =
-        InterceptedIOStreamedResponse(await super.send(interceptedRequest));
-    _interceptStreamedResponse(interceptedStreamedResponse, exchangeCorrelator);
+        InterceptedIOStreamedResponse(streamedResponse);
+
+    interceptor.interceptStreamedResponse(
+        interceptedStreamedResponse, exchangeCorrelator);
 
     return interceptedStreamedResponse;
-  }
-
-  void _interceptRequest(
-    InterceptedBaseRequest request,
-    String correlator,
-  ) {
-    interceptor.interceptRequest(request, correlator);
-  }
-
-  void _interceptStreamedResponse(
-    InterceptedIOStreamedResponse response,
-    String correlator,
-  ) {
-    interceptor.interceptStreamedResponse(response, correlator);
   }
 
   String _generateCorrelator() {

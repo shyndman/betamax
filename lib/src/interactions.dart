@@ -11,76 +11,63 @@ class Cassette {
   });
 
   final String name;
-  @JsonKey(toJson: interactionsToJson, fromJson: interactionsFromJson)
-  final List<Interaction> interactions;
+  final List<InteractionPair> interactions;
 
   Map<String, dynamic> toJson() => _$CassetteToJson(this);
   static Cassette fromJson(dynamic json) => _$CassetteFromJson(json);
 }
 
 @JsonSerializable()
-class RequestInteraction extends Interaction {
+class InteractionPair {
+  InteractionPair({this.request, this.response});
+
+  RequestInteraction request;
+  ResponseInteraction response;
+
+  Map<String, dynamic> toJson() => _$InteractionPairToJson(this);
+  static InteractionPair fromJson(dynamic json) =>
+      _$InteractionPairFromJson(json);
+}
+
+@JsonSerializable()
+class RequestInteraction {
   RequestInteraction({
     @required this.method,
-    @required this.uri,
-    @required Map<String, String> headers,
-    @required String correlator,
-    InteractionBody body,
-  }) : super(headers: headers, body: body, correlator: correlator);
+    @required this.url,
+    @required this.headers,
+    this.body,
+  });
+
   final String method;
-  final String uri;
+  final String url;
+  final Map<String, String> headers;
+  final InteractionBody body;
 
   @override
-  String toString() => 'request $method $uri ${body?.toShortString()}';
+  String toString() => 'request $method $url ${body?.toShortString()}';
 
-  @override
   Map<String, dynamic> toJson() => _$RequestInteractionToJson(this);
   static RequestInteraction fromJson(dynamic json) =>
       _$RequestInteractionFromJson(json);
 }
 
 @JsonSerializable()
-class ResponseInteraction extends Interaction {
+class ResponseInteraction {
   ResponseInteraction({
-    this.status,
-    Map<String, String> headers,
-    InteractionBody body,
-    @required String correlator,
-  }) : super(headers: headers, body: body, correlator: correlator);
+    @required this.status,
+    this.headers,
+    this.body,
+  });
   final int status;
+  final Map<String, String> headers;
+  final InteractionBody body;
 
   @override
   String toString() => 'response $status ${body?.toShortString()}';
 
-  @override
   Map<String, dynamic> toJson() => _$ResponseInteractionToJson(this);
   static ResponseInteraction fromJson(dynamic json) =>
       _$ResponseInteractionFromJson(json);
-}
-
-List<Map<String, dynamic>> interactionsToJson(List<Interaction> interactions) {
-  return interactions.map((interaction) => interaction.toJson()).toList();
-}
-
-List<Interaction> interactionsFromJson(dynamic json) {
-  return (json as List<dynamic>)
-      .map((element) => element.containsKey('method')
-          ? RequestInteraction.fromJson(element)
-          : ResponseInteraction.fromJson(element))
-      .toList();
-}
-
-abstract class Interaction {
-  Interaction({
-    @required this.headers,
-    this.body,
-    @required this.correlator,
-  });
-  final Map<String, String> headers;
-  final InteractionBody body;
-  final String correlator;
-
-  Map<String, dynamic> toJson();
 }
 
 @JsonSerializable()

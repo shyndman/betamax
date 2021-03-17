@@ -2,52 +2,63 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:meta/meta.dart';
+import 'package:path/path.dart';
 
+import '../betamax.dart';
 import 'http/http_intercepted_types.dart';
 import 'http/http_interceptor.dart';
 import 'interactions.dart';
+import 'interceptor.dart';
 
-class RecordingInterceptor implements Interceptor {
-  Cassette _activeRecording;
+class RecordingInterceptor extends BetamaxInterceptor {
+  final Map<String, RequestInteraction> _requestsByCorrelator = {};
+  final Map<String, ResponseInteraction> _responsesByCorrelator = {};
+  final _outstandingCorrelators = <String>{};
+  Completer<void> _responsesReceivedCompletor;
 
-  Cassette start(String name) {
-    if (_activeRecording != null) {
-      _activeRecording.stop();
+  @override
+  Future<void> ejectCassette() async {
+    if (_outstandingCorrelators.isNotEmpty) {
+      _responsesReceivedCompletor = Completer();
+      await _responsesReceivedCompletor.future;
     }
 
-    Cassette newRecording;
-    newRecording = Cassette(name, onStop: () {
-      if (_activeRecording == newRecording) {
-        _activeRecording = null;
-      }
-    });
-    return _activeRecording = newRecording;
+    final pairs = _requestsByCorrelator.entries
+        .map(
+          (entry) => InteractionPair(
+              request: entry.value,
+              response: _responsesByCorrelator[entry.key]),
+        )
+        .toList();
+
+    final cassette = Cassette(name: cassetteFilePath, interactions: pairs);
+    final cassetteJson = JsonEncoder.withIndent('  ').convert(cassette);
+
+    final cassetteFile = File(join(Betamax.cassettePath, cassetteFilePath));
+    cassetteFile.createSync(recursive: true);
+    cassetteFile.writeAsStringSync(cassetteJson);
   }
 
   @override
-  void interceptRequest(
+  Future<OverrideResponse> interceptRequest(
       InterceptedBaseRequest request, String correlator) async {
-    final recording = _activeRecording;
-    if (recording == null) {
-      return;
-    }
-
     final encoding =
-        findEncoding(request.headers[HttpHeaders.contentTypeHeader]);
+        _findEncoding(request.headers[HttpHeaders.contentTypeHeader]);
     final bodyString = await request.finalize().bytesToString(encoding);
 
-    recording.addRequest(
+    _addRequestInteraction(
       RequestInteraction(
         method: request.method.toLowerCase(),
-        uri: request.url.toString(),
+        url: request.url.toString(),
         headers: request.headers,
         body: bodyString.isNotEmpty
             ? InteractionBody(encoding: encoding.name, string: bodyString)
             : null,
-        correlator: correlator,
       ),
+      correlator,
     );
+
+    return null; // Allow
   }
 
   @override
@@ -55,16 +66,17 @@ class RecordingInterceptor implements Interceptor {
     InterceptedIOStreamedResponse response,
     String correlator,
   ) async {
-    final recording = _activeRecording;
-    if (recording == null) {
-      return;
+    if (!_outstandingCorrelators.contains(correlator)) {
+      throw StateError(
+          'Received a response correlator without an associated request, '
+          'correlator=$correlator');
     }
 
     final encoding =
-        findEncoding(response.headers[HttpHeaders.contentTypeHeader]);
+        _findEncoding(response.headers[HttpHeaders.contentTypeHeader]);
     final bodyString = await response.stream.bytesToString(encoding);
 
-    recording.addResponse(
+    _addResponseInteraction(
       ResponseInteraction(
         status: response.statusCode,
         headers: response.headers,
@@ -72,12 +84,12 @@ class RecordingInterceptor implements Interceptor {
           encoding: encoding.name,
           string: bodyString,
         ),
-        correlator: correlator,
       ),
+      correlator,
     );
   }
 
-  Encoding findEncoding(String contentTypeString) {
+  Encoding _findEncoding(String contentTypeString) {
     if (contentTypeString == null) return latin1;
 
     final contentType = ContentType.parse(contentTypeString);
@@ -86,63 +98,26 @@ class RecordingInterceptor implements Interceptor {
 
     return Encoding.getByName(contentType.charset) ?? latin1;
   }
-}
 
-class Cassette {
-  Cassette(this.name, {@required this.onStop});
-
-  final String name;
-  final List<Interaction> interactions = [];
-  final void Function() onStop;
-  bool running = true;
-
-  final _outstandingCorrelators = <String>{};
-  Completer<void> _responsesReceivedCompletor;
-
-  void addRequest(RequestInteraction interaction) {
-    if (!running) {
-      throw StateError('Cannot add interactions to a stopped Recording');
-    }
-
-    _outstandingCorrelators.add(interaction.correlator);
-    interactions.add(interaction);
+  void _addRequestInteraction(
+    RequestInteraction interaction,
+    String correlator,
+  ) {
+    _outstandingCorrelators.add(correlator);
+    _requestsByCorrelator[correlator] = interaction;
   }
 
-  void addResponse(ResponseInteraction response) {
-    if (!_outstandingCorrelators.contains(response.correlator)) {
-      throw StateError(
-          'Received a response correlator without an associated request, '
-          'correlator=${response.correlator}');
-    }
+  void _addResponseInteraction(
+    ResponseInteraction response,
+    String correlator,
+  ) {
+    _outstandingCorrelators.remove(correlator);
+    _responsesByCorrelator[correlator] = response;
 
-    _outstandingCorrelators.remove(response.correlator);
-
-    if (!running &&
-        _outstandingCorrelators.isEmpty &&
-        _responsesReceivedCompletor != null) {
+    if (_responsesReceivedCompletor != null &&
+        _outstandingCorrelators.isEmpty) {
       _responsesReceivedCompletor.complete();
       _responsesReceivedCompletor = null;
     }
-
-    interactions.add(response);
-  }
-
-  /// Returns a future that resolves when all outstanding responses have been
-  /// received by the recorder.
-  Future<void> waitForOutstandingResponses() {
-    assert(!running,
-        'Please stop the recorder before waiting for outstanding responses');
-
-    if (_outstandingCorrelators.isEmpty) {
-      return Future.value();
-    }
-
-    _responsesReceivedCompletor ??= Completer();
-    return _responsesReceivedCompletor.future;
-  }
-
-  void stop() {
-    running = false;
-    onStop();
   }
 }
