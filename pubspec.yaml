@@ -2,7 +2,7 @@ name: betamax
 description: >
   Record your test suite's HTTP interactions and replay them during future test
   runs for fast, deterministic, accurate tests.
-version: 1.0.0
+version: 1.0.0-dev.0
 repository: https://github.com/madewithfelt/betamax
 
 environment:
@@ -15,4 +15,5 @@ dependencies:
   path: ^1.0.0
   pedantic: ^1.11.0
   slugify: ^1.0.0
+  test_api: ^0.2.0
   test: ^1.16.5
