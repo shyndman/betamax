@@ -6,7 +6,7 @@ import 'package:betamax/src/recording_interceptor.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
-import 'package:slugify/slugify.dart';
+import 'package:slugify_string/slugify_string.dart';
 import 'package:test_api/src/backend/invoker.dart';
 
 import 'src/playback_interceptor.dart';

@@ -14,6 +14,6 @@ dependencies:
   nock: ^1.2.0
   path: ^1.0.0
   pedantic: ^1.11.0
-  slugify: ^1.0.0
+  slugify_string: ^2.0.0
   test_api: ^0.2.0
   test: ^1.16.5
