@@ -10,15 +10,9 @@ environment:
 
 dependencies:
   http: ^0.13.0
-  json_annotation: ^3.0.0
   meta: ^1.0.0
   nock: ^1.2.0
   path: ^1.0.0
   pedantic: ^1.11.0
   slugify: ^1.0.0
   test: ^1.16.5
-
-dev_dependencies:
-  build_runner: ^1.0.0
-  built_value: ^8.0.0
-  json_serializable: ^3.0.0

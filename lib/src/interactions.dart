@@ -1,9 +1,5 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
-part 'interactions.g.dart';
-
-@JsonSerializable()
 class Cassette {
   Cassette({
     this.name,
@@ -13,23 +9,52 @@ class Cassette {
   final String name;
   final List<InteractionPair> interactions;
 
-  Map<String, dynamic> toJson() => _$CassetteToJson(this);
-  static Cassette fromJson(dynamic json) => _$CassetteFromJson(json);
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'name': name,
+      'interactions': interactions,
+    };
+  }
+
+  static Cassette fromJson(dynamic json) {
+    return Cassette(
+      name: json['name'] as String,
+      interactions: (json['interactions'] as List)
+          ?.map((e) => e == null
+              ? null
+              : InteractionPair.fromJson(e as Map<String, dynamic>))
+          ?.toList(),
+    );
+  }
 }
 
-@JsonSerializable()
 class InteractionPair {
   InteractionPair({this.request, this.response});
 
   RequestInteraction request;
   ResponseInteraction response;
 
-  Map<String, dynamic> toJson() => _$InteractionPairToJson(this);
-  static InteractionPair fromJson(dynamic json) =>
-      _$InteractionPairFromJson(json);
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'request': request,
+      'response': response,
+    };
+  }
+
+  static InteractionPair fromJson(dynamic json) {
+    return InteractionPair(
+      request: json['request'] == null
+          ? null
+          : RequestInteraction.fromJson(
+              json['request'] as Map<String, dynamic>),
+      response: json['response'] == null
+          ? null
+          : ResponseInteraction.fromJson(
+              json['response'] as Map<String, dynamic>),
+    );
+  }
 }
 
-@JsonSerializable()
 class RequestInteraction {
   RequestInteraction({
     @required this.method,
@@ -43,15 +68,29 @@ class RequestInteraction {
   final Map<String, String> headers;
   final InteractionBody body;
 
-  @override
-  String toString() => 'request $method $url ${body?.toShortString()}';
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'method': method,
+      'uri': url,
+      'headers': headers,
+      'body': body,
+    };
+  }
 
-  Map<String, dynamic> toJson() => _$RequestInteractionToJson(this);
-  static RequestInteraction fromJson(dynamic json) =>
-      _$RequestInteractionFromJson(json);
+  static RequestInteraction fromJson(dynamic json) {
+    return RequestInteraction(
+      method: json['method'] as String,
+      url: json['uri'] as String,
+      headers: (json['headers'] as Map<String, dynamic>)?.map(
+        (k, e) => MapEntry(k, e as String),
+      ),
+      body: json['body'] == null
+          ? null
+          : InteractionBody.fromJson(json['body'] as Map<String, dynamic>),
+    );
+  }
 }
 
-@JsonSerializable()
 class ResponseInteraction {
   ResponseInteraction({
     @required this.status,
@@ -62,15 +101,27 @@ class ResponseInteraction {
   final Map<String, String> headers;
   final InteractionBody body;
 
-  @override
-  String toString() => 'response $status ${body?.toShortString()}';
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'status': status,
+      'headers': headers,
+      'body': body,
+    };
+  }
 
-  Map<String, dynamic> toJson() => _$ResponseInteractionToJson(this);
-  static ResponseInteraction fromJson(dynamic json) =>
-      _$ResponseInteractionFromJson(json);
+  static ResponseInteraction fromJson(dynamic json) {
+    return ResponseInteraction(
+      status: json['status'] as int,
+      headers: (json['headers'] as Map<String, dynamic>)?.map(
+        (k, e) => MapEntry(k, e as String),
+      ),
+      body: json['body'] == null
+          ? null
+          : InteractionBody.fromJson(json['body'] as Map<String, dynamic>),
+    );
+  }
 }
 
-@JsonSerializable()
 class InteractionBody {
   InteractionBody({
     @required this.encoding,
@@ -79,13 +130,17 @@ class InteractionBody {
   final String encoding;
   final String string;
 
-  String toShortString() {
-    return string.length < 80
-        ? string
-        : '${string.replaceAll('\n', '').substring(0, 79)}…';
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'encoding': encoding,
+      'string': string,
+    };
   }
 
-  Map<String, dynamic> toJson() => _$InteractionBodyToJson(this);
-  static InteractionBody fromJson(dynamic json) =>
-      _$InteractionBodyFromJson(json);
+  static InteractionBody fromJson(dynamic json) {
+    return InteractionBody(
+      encoding: json['encoding'] as String,
+      string: json['string'] as String,
+    );
+  }
 }
