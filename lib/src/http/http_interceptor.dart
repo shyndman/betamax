@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:http/http.dart';
+import 'package:http/io_client.dart';
 
 import 'http_intercepted_types.dart';
 
@@ -25,5 +25,5 @@ abstract class HttpInterceptor {
 
 class OverrideResponse {
   OverrideResponse(this.streamedResponse);
-  final StreamedResponse streamedResponse;
+  final IOStreamedResponse streamedResponse;
 }
