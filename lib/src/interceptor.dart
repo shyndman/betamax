@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 /// An interceptor that holds a betamax cassette for context.
 abstract class BetamaxInterceptor extends HttpInterceptor {
   @protected
-  String cassetteFilePath;
+  String? cassetteFilePath;
 
   /// `true` if the interceptor is currently associated with a cassette (a
   /// recording of HTTP interactions).

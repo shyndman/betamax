@@ -10,7 +10,7 @@ abstract class HttpInterceptor {
   ///
   /// Returns an [OverrideResponse] if the interceptor wishes to halt the
   /// regular network call, and return an alternate response.
-  FutureOr<OverrideResponse> interceptRequest(
+  FutureOr<OverrideResponse?> interceptRequest(
     InterceptedBaseRequest request,
     String correlator,
   );

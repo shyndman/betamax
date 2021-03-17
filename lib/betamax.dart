@@ -4,7 +4,6 @@ import 'package:betamax/src/http/http_intercepting_client.dart';
 import 'package:betamax/src/interceptor.dart';
 import 'package:betamax/src/recording_interceptor.dart';
 import 'package:http/http.dart' as http;
-import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:slugify_string/slugify_string.dart';
 import 'package:test_api/src/backend/invoker.dart';
@@ -20,17 +19,17 @@ enum Mode {
 }
 
 class Betamax {
-  static String suiteName;
-  static Mode mode;
-  static String cassettePath;
+  static String? suiteName;
+  static Mode? mode;
+  static String? cassettePath;
   static bool get isConfigured => mode != null && cassettePath != null;
 
-  static HttpInterceptingClient _activeClient;
+  static HttpInterceptingClient? _activeClient;
 
   static void configure({
-    @required String suiteName,
-    @required Mode mode,
-    @required String cassettePath,
+    required String suiteName,
+    required Mode mode,
+    required String cassettePath,
   }) {
     Betamax.suiteName = suiteName;
     Betamax.mode = mode;
@@ -48,7 +47,7 @@ class Betamax {
         ? RecordingInterceptor()
         : PlaybackInterceptor();
 
-    Invoker.current.liveTest.onComplete.then((value) {
+    Invoker.current!.liveTest.onComplete.then((value) {
       _activeClient = null;
     });
 
@@ -58,14 +57,14 @@ class Betamax {
   static Future<void> setCassette(List<String> cassettePathParts) async {
     final cassettePath = [suiteName]
         .followedBy(cassettePathParts)
-        .map((part) => Slugify(part.trim(), delimiter: '_'))
+        .map((part) => Slugify(part!.trim(), delimiter: '_'))
         .join('/');
 
-    final interceptor = _activeClient.interceptor as BetamaxInterceptor;
+    final interceptor = _activeClient!.interceptor as BetamaxInterceptor;
     await interceptor.insertCassette(cassettePath);
 
     unawaited(
-      Invoker.current.liveTest.onComplete
+      Invoker.current!.liveTest.onComplete
           .then((value) => interceptor.ejectCassette()),
     );
   }

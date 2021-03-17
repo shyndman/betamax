@@ -1,13 +1,11 @@
-import 'package:meta/meta.dart';
-
 class Cassette {
   Cassette({
     this.name,
     this.interactions,
   });
 
-  final String name;
-  final List<InteractionPair> interactions;
+  final String? name;
+  final List<InteractionPair>? interactions;
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
@@ -18,12 +16,10 @@ class Cassette {
 
   static Cassette fromJson(dynamic json) {
     return Cassette(
-      name: json['name'] as String,
-      interactions: (json['interactions'] as List)
-          ?.map((e) => e == null
-              ? null
-              : InteractionPair.fromJson(e as Map<String, dynamic>))
-          ?.toList(),
+      name: json['name'] as String?,
+      interactions: (json['interactions'] as List?)
+          ?.map((e) => InteractionPair.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 }
@@ -31,8 +27,8 @@ class Cassette {
 class InteractionPair {
   InteractionPair({this.request, this.response});
 
-  RequestInteraction request;
-  ResponseInteraction response;
+  RequestInteraction? request;
+  ResponseInteraction? response;
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
@@ -57,16 +53,16 @@ class InteractionPair {
 
 class RequestInteraction {
   RequestInteraction({
-    @required this.method,
-    @required this.url,
-    @required this.headers,
+    required this.method,
+    required this.url,
+    required this.headers,
     this.body,
   });
 
-  final String method;
-  final String url;
-  final Map<String, String> headers;
-  final InteractionBody body;
+  final String? method;
+  final String? url;
+  final Map<String, String>? headers;
+  final InteractionBody? body;
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
@@ -79,9 +75,9 @@ class RequestInteraction {
 
   static RequestInteraction fromJson(dynamic json) {
     return RequestInteraction(
-      method: json['method'] as String,
-      url: json['uri'] as String,
-      headers: (json['headers'] as Map<String, dynamic>)?.map(
+      method: json['method'] as String?,
+      url: json['uri'] as String?,
+      headers: (json['headers'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, e as String),
       ),
       body: json['body'] == null
@@ -93,13 +89,13 @@ class RequestInteraction {
 
 class ResponseInteraction {
   ResponseInteraction({
-    @required this.status,
+    required this.status,
     this.headers,
     this.body,
   });
-  final int status;
-  final Map<String, String> headers;
-  final InteractionBody body;
+  final int? status;
+  final Map<String, String>? headers;
+  final InteractionBody? body;
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
@@ -111,8 +107,8 @@ class ResponseInteraction {
 
   static ResponseInteraction fromJson(dynamic json) {
     return ResponseInteraction(
-      status: json['status'] as int,
-      headers: (json['headers'] as Map<String, dynamic>)?.map(
+      status: json['status'] as int?,
+      headers: (json['headers'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, e as String),
       ),
       body: json['body'] == null
@@ -124,11 +120,11 @@ class ResponseInteraction {
 
 class InteractionBody {
   InteractionBody({
-    @required this.encoding,
-    @required this.string,
+    required this.encoding,
+    required this.string,
   });
-  final String encoding;
-  final String string;
+  final String? encoding;
+  final String? string;
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
@@ -139,8 +135,8 @@ class InteractionBody {
 
   static InteractionBody fromJson(dynamic json) {
     return InteractionBody(
-      encoding: json['encoding'] as String,
-      string: json['string'] as String,
+      encoding: json['encoding'] as String?,
+      string: json['string'] as String?,
     );
   }
 }

@@ -14,13 +14,13 @@ class RecordingInterceptor extends BetamaxInterceptor {
   final Map<String, RequestInteraction> _requestsByCorrelator = {};
   final Map<String, ResponseInteraction> _responsesByCorrelator = {};
   final _outstandingCorrelators = <String>{};
-  Completer<void> _responsesReceivedCompletor;
+  Completer<void>? _responsesReceivedCompletor;
 
   @override
   Future<void> ejectCassette() async {
     if (_outstandingCorrelators.isNotEmpty) {
       _responsesReceivedCompletor = Completer();
-      await _responsesReceivedCompletor.future;
+      await _responsesReceivedCompletor!.future;
     }
 
     final pairs = _requestsByCorrelator.entries
@@ -34,13 +34,13 @@ class RecordingInterceptor extends BetamaxInterceptor {
     final cassette = Cassette(name: cassetteFilePath, interactions: pairs);
     final cassetteJson = JsonEncoder.withIndent('  ').convert(cassette);
 
-    final cassetteFile = File(join(Betamax.cassettePath, cassetteFilePath));
+    final cassetteFile = File(join(Betamax.cassettePath!, cassetteFilePath));
     cassetteFile.createSync(recursive: true);
     cassetteFile.writeAsStringSync(cassetteJson);
   }
 
   @override
-  Future<OverrideResponse> interceptRequest(
+  Future<OverrideResponse?> interceptRequest(
       InterceptedBaseRequest request, String correlator) async {
     final encoding =
         _findEncoding(request.headers[HttpHeaders.contentTypeHeader]);
@@ -89,7 +89,7 @@ class RecordingInterceptor extends BetamaxInterceptor {
     );
   }
 
-  Encoding _findEncoding(String contentTypeString) {
+  Encoding _findEncoding(String? contentTypeString) {
     if (contentTypeString == null) return latin1;
 
     final contentType = ContentType.parse(contentTypeString);
@@ -116,7 +116,7 @@ class RecordingInterceptor extends BetamaxInterceptor {
 
     if (_responsesReceivedCompletor != null &&
         _outstandingCorrelators.isEmpty) {
-      _responsesReceivedCompletor.complete();
+      _responsesReceivedCompletor!.complete();
       _responsesReceivedCompletor = null;
     }
   }

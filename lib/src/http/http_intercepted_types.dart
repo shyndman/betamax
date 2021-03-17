@@ -7,7 +7,7 @@ import 'repeatable_byte_stream.dart';
 class InterceptedBaseRequest extends ProxyBaseRequest {
   InterceptedBaseRequest(BaseRequest inner) : super(inner);
 
-  RepeatableByteStream _repeatableStream;
+  RepeatableByteStream? _repeatableStream;
 
   @override
   ByteStream finalize() =>
@@ -17,7 +17,7 @@ class InterceptedBaseRequest extends ProxyBaseRequest {
 class InterceptedIOStreamedResponse extends ProxyIOStreamedResponse {
   InterceptedIOStreamedResponse(IOStreamedResponse inner) : super(inner);
 
-  RepeatableByteStream _repeatableStream;
+  RepeatableByteStream? _repeatableStream;
 
   @override
   ByteStream get stream =>

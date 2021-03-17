@@ -13,7 +13,7 @@ import 'interceptor.dart';
 
 class PlaybackInterceptor extends BetamaxInterceptor {
   /// The cassette being played back
-  Cassette cassette;
+  late Cassette cassette;
 
   /// The index of the current request-response being played back
   int playheadPosition = 0;
@@ -22,7 +22,7 @@ class PlaybackInterceptor extends BetamaxInterceptor {
   void insertCassette(String cassetteFilePath) {
     super.insertCassette(cassetteFilePath);
 
-    final cassetteFile = File(join(Betamax.cassettePath, cassetteFilePath));
+    final cassetteFile = File(join(Betamax.cassettePath!, cassetteFilePath));
     if (!cassetteFile.existsSync()) {
       throw BetamaxPlaybackException('Cassette not found at $cassetteFilePath');
     }
@@ -36,12 +36,12 @@ class PlaybackInterceptor extends BetamaxInterceptor {
   @override
   OverrideResponse interceptRequest(
       InterceptedBaseRequest request, String correlator) {
-    if (cassette.interactions.length <= playheadPosition) {
+    if (cassette.interactions!.length <= playheadPosition) {
       fail('Unexpected request (${request.method} ${request.url})');
     }
 
-    final interaction = cassette.interactions[playheadPosition];
-    final storedReq = interaction.request;
+    final interaction = cassette.interactions![playheadPosition];
+    final storedReq = interaction.request!;
 
     if (request.method.toLowerCase() != storedReq.method ||
         request.url.toString() != storedReq.url) {
@@ -50,12 +50,12 @@ class PlaybackInterceptor extends BetamaxInterceptor {
 
     playheadPosition++;
 
-    final storedRes = interaction.response;
+    final storedRes = interaction.response!;
     return OverrideResponse(
       IOStreamedResponse(
-        Stream.fromIterable([storedRes.body.string.codeUnits]),
-        storedRes.status,
-        headers: storedRes.headers,
+        Stream.fromIterable([storedRes.body!.string!.codeUnits]),
+        storedRes.status!,
+        headers: storedRes.headers!,
       ),
     );
   }

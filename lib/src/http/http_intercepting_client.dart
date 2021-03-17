@@ -2,21 +2,20 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
-import 'package:meta/meta.dart';
 
 import 'http_intercepted_types.dart';
 import 'http_interceptor.dart';
 
 class HttpInterceptingClient extends IOClient {
   HttpInterceptingClient({
-    HttpClient inner,
-    @required this.interceptor,
+    HttpClient? inner,
+    required this.interceptor,
   }) : super(inner) {
     _correlatorBase = identityHashCode(this);
   }
 
   HttpInterceptor interceptor;
-  int _correlatorBase;
+  int? _correlatorBase;
   int _exchangeCount = 0;
 
   @override
