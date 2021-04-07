@@ -1,7 +1,7 @@
-## 1.0.0-dev.1
+## 0.1.0
 
 - Migrate to another slugify package
 
-## 1.0.0-dev.0
+## 0.0.0
 
 - Initial release
