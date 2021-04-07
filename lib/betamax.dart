@@ -113,8 +113,9 @@ class Betamax {
 /// Sometimes it's the project root, other times it's the project directory,
 /// depending on how the tests are invoked.
 String _getTestDirectory() {
-  return Trace.current()
+  final filePathInTest = Trace.current()
       .frames
-      .firstWhere((frame) => dirname(frame.location).endsWith('/test'))
+      .firstWhere((frame) => dirname(frame.location).endsWith('test'))
       .location;
+  return dirname(filePathInTest);
 }
