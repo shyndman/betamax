@@ -14,7 +14,7 @@ abstract class BetamaxInterceptor extends HttpInterceptor {
 
   /// Begin recording or playback for the cassette named [cassetteFilePath].
   @mustCallSuper
-  FutureOr<void> insertCassette(String cassetteFilePath) {
+  void insertCassette(String cassetteFilePath) {
     this.cassetteFilePath = cassetteFilePath;
   }
 
