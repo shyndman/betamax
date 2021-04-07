@@ -1,3 +1,7 @@
+## 1.0.1
+
+- Fix bug in test directory machinery
+
 ## 1.0.0
 
 - Simplify API
