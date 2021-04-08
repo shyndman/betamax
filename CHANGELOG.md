@@ -1,3 +1,8 @@
+## 1.0.4
+
+- Tests!
+- Improved README
+
 ## 1.0.3
 
 - Reduce API surface (we just published, so I'm winging it and calling this
