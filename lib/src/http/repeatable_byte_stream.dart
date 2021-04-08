@@ -11,7 +11,25 @@ import 'package:http/http.dart';
 /// NOTE: There are significant memory implications to using a stream that
 /// stores everything that it reads. Use with caution.
 class RepeatableByteStream extends ByteStream {
-  RepeatableByteStream(Stream<List<int>> stream) : super(stream);
+  RepeatableByteStream(Stream<List<int>> stream) : super(stream) {
+    // Set up a subscription on the inner stream, and rebroadcast all events
+    // to the listeners.
+    _innerSubscription ??= super.listen(
+      (List<int> bytes) {
+        _innerStreamBytes.addAll(bytes);
+        _listenerControllers.addEvent(bytes);
+      },
+      onError: (Object e, [StackTrace? st]) {
+        _listenerControllers.addError(e, st);
+      },
+      onDone: () {
+        _innerStreamDone = true;
+        _listenerControllers.closeAll();
+        _listenerControllers.clear();
+      },
+      cancelOnError: false,
+    );
+  }
 
   StreamSubscription<List<int>>? _innerSubscription;
   var _innerStreamDone = false;
@@ -40,32 +58,18 @@ class RepeatableByteStream extends ByteStream {
       );
     }
 
-    // Set up a subscription on the inner stream, and rebroadcast all events
-    // to the listeners.
-    _innerSubscription ??= super.listen(
-      (List<int> bytes) {
-        _innerStreamBytes.addAll(bytes);
-        _listenerControllers.addEvent(bytes);
-      },
-      onError: (Object e, [StackTrace? st]) {
-        _listenerControllers.addError(e, st);
-      },
-      onDone: () {
-        _innerStreamDone = true;
-        _listenerControllers.closeAll();
-        _listenerControllers.clear();
-      },
-      cancelOnError: false,
-    );
-
     // Construct a new controller for the listener, pre-populate it with the
     // bytes we've already collected from the inner stream, and hand it on back.
-    final controller = StreamController<List<int>>()
+    final controller = StreamController<List<int>>();
+
+    if (_innerStreamBytes.isNotEmpty) {
       // It's important that we copy the list, or else it will stick around in
       // the controller until someone subscribes, which may be AFTER the list
       // has been written to. This would result in partial or complete
       // duplication of the bytes in the output.
-      ..add(_innerStreamBytes.toList());
+      controller.add(_innerStreamBytes.toList());
+    }
+
     _listenerControllers.add(controller);
     return controller.stream.listen(
       onData,
