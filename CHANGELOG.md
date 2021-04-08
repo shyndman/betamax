@@ -1,3 +1,8 @@
+## 1.0.3
+
+- Reduce API surface (we just published, so I'm winging it and calling this
+  a patch change)
+
 ## 1.0.2
 
 - Improve README somewhat
