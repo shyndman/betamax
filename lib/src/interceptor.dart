@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:betamax/src/http/http_interceptor.dart';
 import 'package:meta/meta.dart';
 
+import 'interactions.dart';
+
 /// An interceptor that holds a betamax cassette for context.
 abstract class BetamaxInterceptor extends HttpInterceptor {
   @protected
@@ -19,5 +21,5 @@ abstract class BetamaxInterceptor extends HttpInterceptor {
   }
 
   /// Finish recording or playback for the cassette named [cassetteFilePath].
-  FutureOr<void> ejectCassette();
+  FutureOr<Cassette> ejectCassette();
 }

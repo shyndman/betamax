@@ -24,16 +24,16 @@ class PlaybackInterceptor extends BetamaxInterceptor {
   }
 
   @override
-  FutureOr<void> ejectCassette() {}
+  FutureOr<Cassette> ejectCassette() => cassette;
 
   @override
   OverrideResponse interceptRequest(
       InterceptedBaseRequest request, String correlator) {
-    if (cassette.interactions!.length <= playheadPosition) {
+    if (cassette.interactions.length <= playheadPosition) {
       fail('Unexpected request (${request.method} ${request.url})');
     }
 
-    final interaction = cassette.interactions![playheadPosition];
+    final interaction = cassette.interactions[playheadPosition];
     final storedReq = interaction.request!;
 
     if (request.method.toLowerCase() != storedReq.method ||
