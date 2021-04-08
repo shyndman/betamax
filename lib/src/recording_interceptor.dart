@@ -15,7 +15,7 @@ class RecordingInterceptor extends BetamaxInterceptor {
   Completer<void>? _responsesReceivedCompletor;
 
   @override
-  Future<void> ejectCassette() async {
+  Future<Cassette> ejectCassette() async {
     if (_outstandingCorrelators.isNotEmpty) {
       _responsesReceivedCompletor = Completer();
       await _responsesReceivedCompletor!.future;
@@ -29,10 +29,13 @@ class RecordingInterceptor extends BetamaxInterceptor {
         )
         .toList();
 
+    final cassette = Cassette(name: cassetteFilePath, interactions: pairs);
     Betamax.cassetteFs.write(
       cassetteFilePath!,
-      Cassette(name: cassetteFilePath, interactions: pairs),
+      cassette,
     );
+
+    return cassette;
   }
 
   @override

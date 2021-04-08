@@ -1,11 +1,11 @@
 class Cassette {
   Cassette({
     this.name,
-    this.interactions,
-  });
+    List<InteractionPair>? interactions,
+  }) : interactions = interactions ?? const [];
 
   final String? name;
-  final List<InteractionPair>? interactions;
+  final List<InteractionPair> interactions;
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
