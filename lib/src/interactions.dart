@@ -55,7 +55,7 @@ class RequestInteraction {
   RequestInteraction({
     required this.method,
     required this.url,
-    required this.headers,
+    this.headers = const {},
     this.body,
   });
 
@@ -90,7 +90,7 @@ class RequestInteraction {
 class ResponseInteraction {
   ResponseInteraction({
     required this.status,
-    this.headers,
+    this.headers = const {},
     this.body,
   });
   final int? status;
@@ -120,8 +120,8 @@ class ResponseInteraction {
 
 class InteractionBody {
   InteractionBody({
-    required this.encoding,
     required this.string,
+    this.encoding = 'utf-8',
   });
   final String? encoding;
   final String? string;
