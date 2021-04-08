@@ -1,10 +1,14 @@
 # Betamax
 [![betamax Pub](https://img.shields.io/pub/v/betamax)](https://pub.dev/packages/betamax)
 
-Like Ruby's VCR, but for Dart's [`http`](https://pub.dev/packages/http) package.
-
 Record your test suite's HTTP interactions and replay them during future test
 runs for fast, deterministic, accurate tests.
+
+Like Ruby's VCR, but for the [`http`](https://pub.dev/packages/http) Dart
+package.
+
+Implements a custom client capable of recording all types of request, including
+`StreamedRequest`s and `MultipartRequest`s.
 
 ```dart
 import 'package:betamax/betamax.dart';
