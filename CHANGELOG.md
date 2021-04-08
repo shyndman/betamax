@@ -1,3 +1,7 @@
+## 1.0.2
+
+- Improve README somewhat
+
 ## 1.0.1
 
 - Fix bug in test directory machinery
