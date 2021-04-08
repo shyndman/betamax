@@ -1,5 +1,6 @@
 # Betamax
 [![betamax Pub](https://img.shields.io/pub/v/betamax)](https://pub.dev/packages/betamax)
+[![test](https://github.com/madewithfelt/betamax/actions/workflows/test.yml/badge.svg)](https://github.com/madewithfelt/betamax/actions/workflows/test.yml)
 
 Record your test suite's HTTP interactions and replay them during future test
 runs for fast, deterministic, accurate tests.
