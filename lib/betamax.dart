@@ -1,7 +1,9 @@
+import 'package:betamax/src/cassette_fs.dart';
 import 'package:betamax/src/http/http_intercepting_client.dart';
 import 'package:betamax/src/interceptor.dart';
 import 'package:betamax/src/recording_interceptor.dart';
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 import 'package:path/path.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:slugify_string/slugify_string.dart';
@@ -11,8 +13,10 @@ import 'package:test_api/src/backend/invoker.dart';
 import 'src/http/http_intercepting_client.dart';
 import 'src/playback_interceptor.dart';
 
-/// Use with [Betamax.configureSuite] to set betamax to either playback previously
-/// generated HTTP fixtures, or to record them.
+export 'src/cassette_fs.dart' show CassetteFs;
+
+/// Use with [Betamax.configureSuite] to set betamax to either playback
+/// previously generated HTTP fixtures, or to record them.
 enum Mode {
   recording,
   playback,
@@ -25,6 +29,10 @@ class Betamax {
   static Mode? mode;
   static String? cassettePath;
   static bool get isConfigured => mode != null && cassettePath != null;
+
+  /// Responsible for reading and writing [Cassette]s (HTTP fixtures).
+  @internal
+  static CassetteFs cassetteFs = JsonIoCassetteFs();
 
   static HttpInterceptingClient? _activeClient;
 

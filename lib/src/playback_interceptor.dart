@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:betamax/src/http/http_intercepted_types.dart';
 import 'package:http/io_client.dart';
-import 'package:path/path.dart';
 import 'package:test/test.dart';
 
 import '../betamax.dart';
@@ -23,12 +20,7 @@ class PlaybackInterceptor extends BetamaxInterceptor {
   void insertCassette(String cassetteFilePath) {
     super.insertCassette(cassetteFilePath);
 
-    final cassetteFile = File(join(Betamax.cassettePath!, cassetteFilePath));
-    if (!cassetteFile.existsSync()) {
-      throw BetamaxPlaybackException('Cassette not found at $cassetteFilePath');
-    }
-
-    cassette = Cassette.fromJson(jsonDecode(cassetteFile.readAsStringSync()));
+    cassette = Betamax.cassetteFs.read(cassetteFilePath);
   }
 
   @override

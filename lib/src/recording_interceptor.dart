@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:path/path.dart';
-
 import '../betamax.dart';
 import 'http/http_intercepted_types.dart';
 import 'http/http_interceptor.dart';
@@ -31,12 +29,10 @@ class RecordingInterceptor extends BetamaxInterceptor {
         )
         .toList();
 
-    final cassette = Cassette(name: cassetteFilePath, interactions: pairs);
-    final cassetteJson = JsonEncoder.withIndent('  ').convert(cassette);
-
-    final cassetteFile = File(join(Betamax.cassettePath!, cassetteFilePath));
-    cassetteFile.createSync(recursive: true);
-    cassetteFile.writeAsStringSync(cassetteJson);
+    Betamax.cassetteFs.write(
+      cassetteFilePath!,
+      Cassette(name: cassetteFilePath, interactions: pairs),
+    );
   }
 
   @override
