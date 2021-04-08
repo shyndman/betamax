@@ -1,19 +1,10 @@
 # Betamax
+[![betamax Pub](https://img.shields.io/pub/v/betamax)](https://pub.dev/packages/betamax)
 
 Like Ruby's VCR, but for Dart's [`http`](https://pub.dev/packages/http) package.
 
 Record your test suite's HTTP interactions and replay them during future test
 runs for fast, deterministic, accurate tests.
-
-## Getting started
-### Latest Release
-
-```yaml
-dependencies:
-  betamax: ^1.0.0
-```
-
-## Example
 
 ```dart
 import 'package:betamax/betamax.dart';
@@ -52,4 +43,12 @@ void main() async {
     expect(response.statusCode, 200);
   });
 }
+```
+
+## Getting started
+### Latest Release
+
+```yaml
+dependencies:
+  betamax: ^1.0.0
 ```
