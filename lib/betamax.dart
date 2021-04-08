@@ -8,10 +8,8 @@ import 'package:slugify_string/slugify_string.dart';
 import 'package:stack_trace/stack_trace.dart';
 import 'package:test_api/src/backend/invoker.dart';
 
+import 'src/http/http_intercepting_client.dart';
 import 'src/playback_interceptor.dart';
-
-export 'src/http/http_intercepting_client.dart';
-export 'src/interactions.dart';
 
 /// Use with [Betamax.configureSuite] to set betamax to either playback previously
 /// generated HTTP fixtures, or to record them.

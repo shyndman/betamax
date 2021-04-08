@@ -9,6 +9,7 @@ import 'package:test/test.dart';
 
 import '../betamax.dart';
 import 'http/http_interceptor.dart';
+import 'interactions.dart';
 import 'interceptor.dart';
 
 class PlaybackInterceptor extends BetamaxInterceptor {
