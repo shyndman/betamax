@@ -5,11 +5,27 @@
 Record your test suite's HTTP interactions and replay them during future test
 runs for fast, deterministic, accurate tests.
 
-Like Ruby's VCR, but for the [`http`](https://pub.dev/packages/http) Dart
-package.
+## ✨Featuring:
 
-Implements a custom client capable of recording all types of request, including
-`StreamedRequest`s and `MultipartRequest`s.
+- Recording and playback of arbitrary HTTP interactions sequences
+- Automatic test failure (in playback mode) when expected requests do not arrive
+- Automatic naming of fixtures, based on the names of your tests, and their
+  groups
+- Support for the entire set of `http`'s request types — basic, streamed, and
+  multipart
+- Easy set up!
+
+Inspired by [Ruby's VCR gem](https://github.com/vcr/vcr).
+
+## Getting started
+### Latest Release
+
+```yaml
+dependencies:
+  betamax: ^1.0.0
+```
+
+## Example
 
 ```dart
 import 'package:betamax/betamax.dart';
@@ -48,12 +64,4 @@ void main() async {
     expect(response.statusCode, 200);
   });
 }
-```
-
-## Getting started
-### Latest Release
-
-```yaml
-dependencies:
-  betamax: ^1.0.0
 ```
