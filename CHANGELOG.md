@@ -1,3 +1,7 @@
+## 1.0.5
+
+- Slight README adjustment
+
 ## 1.0.4
 
 - Tests!
