@@ -8,9 +8,8 @@ runs for fast, deterministic, accurate tests.
 ## ✨Featuring:
 
 - Recording and playback of arbitrary HTTP interactions sequences
+- Naming of fixtures based on the names of your tests, and their groups
 - Automatic test failure (in playback mode) when expected requests do not arrive
-- Automatic naming of fixtures, based on the names of your tests, and their
-  groups
 - Support for the entire set of `http`'s request types — basic, streamed, and
   multipart
 - Easy set up!
