@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:betamax/src/http/http_interceptor.dart';
 import 'package:meta/meta.dart';
 
+import 'http/http_interceptor.dart';
 import 'interactions.dart';
 
 /// An interceptor that holds a betamax cassette for context.

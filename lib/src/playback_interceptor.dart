@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:betamax/src/http/http_intercepted_types.dart';
 import 'package:http/io_client.dart';
 import 'package:test/test.dart';
 
 import '../betamax.dart';
+import 'http/http_intercepted_types.dart';
 import 'http/http_interceptor.dart';
 import 'interactions.dart';
 import 'interceptor.dart';

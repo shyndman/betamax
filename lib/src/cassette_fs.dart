@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:betamax/src/playback_interceptor.dart';
 import 'package:path/path.dart';
 
 import '../betamax.dart';
 import 'interactions.dart';
+import 'playback_interceptor.dart';
 
 /// Implemented by classes that perform the reading and writing of cassettes.
 abstract class CassetteFs {
