@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:path/path.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:slugify_string/slugify_string.dart';
 import 'package:stack_trace/stack_trace.dart';
+// We need Invoker access for automatic naming of cassettes
+// ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
 
 import 'src/cassette_fs.dart';

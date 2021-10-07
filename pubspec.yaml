@@ -4,19 +4,19 @@ description: >
   runs for fast, deterministic, accurate tests.
 
   Like Ruby's VCR gem!
-version: 1.0.5
+version: 1.0.6
 repository: https://github.com/madewithfelt/betamax
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.14.0 <3.0.0'
 
 dependencies:
   http: ^0.13.0
   meta: ^1.0.0
   nock: ^1.2.0
   path: ^1.0.0
-  pedantic: ^1.11.0
+  lints: ^1.0.1
   slugify_string: ^2.0.0
   stack_trace: ^1.0.0
-  test_api: ^0.2.0
-  test: ^1.16.5
+  test_api: ^0.4.0
+  test: ^1.18.0
