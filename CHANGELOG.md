@@ -1,3 +1,8 @@
+## 1.0.6
+
+- Upgrade packages (incl. migration from `pedantic` to `lints`)
+- Bump SDK minimum version to 2.14.0
+
 ## 1.0.5
 
 - Slight README adjustment
