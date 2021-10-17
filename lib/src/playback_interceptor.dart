@@ -27,21 +27,24 @@ class PlaybackInterceptor extends BetamaxInterceptor {
   FutureOr<Cassette> ejectCassette() => cassette;
 
   @override
-  OverrideResponse interceptRequest(
-      InterceptedBaseRequest request, String correlator) {
+  Future<OverrideResponse> interceptRequest(
+      InterceptedBaseRequest request, String correlator) async {
     if (cassette.interactions.length <= playheadPosition) {
       fail('Unexpected request (${request.method} ${request.url})');
     }
 
     final interaction = cassette.interactions[playheadPosition];
     final storedReq = interaction.request!;
+    playheadPosition++;
 
     if (request.method.toLowerCase() != storedReq.method ||
         request.url.toString() != storedReq.url) {
       fail('Unexpected request (${request.method} ${request.url})');
     }
 
-    playheadPosition++;
+    // The stream being drained is important, as it can have side effects
+    // (like upload progress)
+    await request.finalize().drain();
 
     final storedRes = interaction.response!;
     return OverrideResponse(
