@@ -1,3 +1,7 @@
+## 1.0.7
+
+- Drain request streams during playback, to provide any side-effects
+
 ## 1.0.6
 
 - Upgrade packages (incl. migration from `pedantic` to `lints`)
