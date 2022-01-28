@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
@@ -75,7 +76,9 @@ class Betamax {
       _activeClient = null;
     });
 
-    _activeClient = HttpInterceptingClient(interceptor: interceptor);
+    _activeClient = HttpInterceptingClient(
+        inner: HttpClient()..findProxy = HttpClient.findProxyFromEnvironment,
+        interceptor: interceptor);
 
     if (setCassetteFromTestName) {
       final liveTestPath = [
