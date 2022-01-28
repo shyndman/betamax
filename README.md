@@ -12,6 +12,8 @@ runs for fast, deterministic, accurate tests.
 - Automatic test failure (in playback mode) when expected requests do not arrive
 - Support for the entire set of `http`'s request types — basic, streamed, and
   multipart
+- HTTP proxy support while in record mode, via
+  [`findProxyFromEnvironment`](https://api.dart.dev/stable/dart-io/HttpClient/findProxyFromEnvironment.html)
 - Easy set up!
 
 Inspired by [Ruby's VCR gem](https://github.com/vcr/vcr).
