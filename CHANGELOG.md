@@ -1,3 +1,8 @@
+## 1.1.0
+
+- Support environment-defined HTTP proxy configurations while in recording mode
+- Reference new repo URL in pubspec
+
 ## 1.0.7
 
 - Drain request streams during playback, to provide any side-effects

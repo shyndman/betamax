@@ -4,7 +4,7 @@ description: >
   runs for fast, deterministic, accurate tests.
 
   Like Ruby's VCR gem!
-version: 1.0.7
+version: 1.1.0
 repository: https://github.com/shyndman/betamax
 
 environment:
