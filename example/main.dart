@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:betamax/betamax.dart';
 import 'package:http/http.dart' as http;
 import 'package:test/test.dart';
@@ -6,7 +8,8 @@ void main() async {
   setUpAll(() {
     // We use an environment variable to determine whether we should be
     // recording or playing back HTTP interactions.
-    final recordFixtures = bool.fromEnvironment('RECORD_HTTP_FIXTURES');
+    final recordFixtures =
+        Platform.environment['RECORD_HTTP_FIXTURES'] == 'true';
 
     Betamax.configureSuite(
       // The name of the test suite (I generally name this according to file)
