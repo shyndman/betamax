@@ -1,3 +1,7 @@
+## 1.1.1
+
+- Fix a mistake in the example code and README
+
 ## 1.1.0
 
 - Support environment-defined HTTP proxy configurations while in recording mode
