@@ -1,3 +1,7 @@
+## 1.1.2
+
+- Fix a mistake in the CHANGELOG (need to keep that score high)
+
 ## 1.1.1
 
 - Fix a mistake in the example code and README
