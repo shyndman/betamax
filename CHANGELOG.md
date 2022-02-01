@@ -1,3 +1,7 @@
+## 1.1.3
+
+- Populate Response.request during playback
+
 ## 1.1.2
 
 - Fix a mistake in the CHANGELOG (need to keep that score high)
