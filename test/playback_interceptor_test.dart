@@ -29,6 +29,7 @@ void main() {
       expect(response.statusCode, 418);
       expect(response.headers, {'content-type': 'application/tea-pot'});
       expect(response.body, 'Short and stout');
+      expect(response.request?.method, equalsIgnoringCase('get'));
     });
 
     test('fails when requests are not expected', () async {

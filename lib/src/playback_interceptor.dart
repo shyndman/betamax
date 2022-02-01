@@ -52,6 +52,7 @@ class PlaybackInterceptor extends BetamaxInterceptor {
         Stream.fromIterable([storedRes.body!.string!.codeUnits]),
         storedRes.status!,
         headers: storedRes.headers!,
+        request: request,
       ),
     );
   }
