@@ -1,3 +1,11 @@
+## 2.0.0
+
+- BREAKING: Fix test-based fixture path generation, so that the names of parent
+  groups are excluded from child groups.
+
+  This necessitated a major version bump because existing fixtures will have to
+  be regenerated.
+
 ## 1.1.3
 
 - Populate Response.request during playback
