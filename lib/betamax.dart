@@ -9,8 +9,11 @@ import 'package:stack_trace/stack_trace.dart';
 // We need Invoker access for automatic naming of cassettes
 // ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
+// ignore: implementation_imports
+import 'package:test_api/src/backend/live_test.dart';
 
 import 'src/cassette_fs.dart';
+import 'src/collection_util.dart';
 import 'src/http/http_intercepting_client.dart';
 import 'src/interceptor.dart';
 import 'src/playback_interceptor.dart';
@@ -81,17 +84,33 @@ class Betamax {
         interceptor: interceptor);
 
     if (setCassetteFromTestName) {
-      final liveTestPath = [
-        ...liveTest.groups
-            // Skip root group
-            .skip(1)
-            .map((g) => g.name),
-        liveTest.individualName,
-      ];
-      Betamax.setCassette(liveTestPath);
+      Betamax.setCassette(cassettePathFromTest(liveTest));
     }
 
     return _activeClient!;
+  }
+
+  @visibleForTesting
+  static List<String> cassettePathFromTest(LiveTest liveTest) {
+    final pathPartNames = [
+      ...liveTest.groups
+          // Skip root group
+          .skip(1)
+          .map((g) => g.name),
+      liveTest.individualName,
+    ];
+
+    // Child groups include the names of their parents, so we strip out the
+    // parent prefixes for each
+    return pathPartNames.indexed.map((g) {
+      final i = g.index;
+      final name = g.element;
+      final prevName =
+          1 <= i && i < pathPartNames.length ? pathPartNames[i - 1] : '';
+      return name
+          .replaceFirst(RegExp('^${RegExp.escape(prevName)}'), '')
+          .trim();
+    }).toList();
   }
 
   /// Explicitly set the cassette used by the last client returned by
